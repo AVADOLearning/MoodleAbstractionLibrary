@@ -1,5 +1,5 @@
 {
-  "name": "avadolearning/moodle_abstraction_library",
+  "name": "LoneBeta/MoodleAbstractionLlibrary",
   "type": "library",
   "authors": [
     {
@@ -18,7 +18,6 @@
   },
   "autoload": {
     "psr-4": {
-      "local\\degreed\\": "../degreed/classes/",
       "Avado\\MoodleAbstractionLibrary\\": "classes/"
     }
   }
