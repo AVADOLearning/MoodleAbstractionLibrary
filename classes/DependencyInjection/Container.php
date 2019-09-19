@@ -2,6 +2,7 @@
 
 namespace Avado\MoodleAbstractionLibrary\DependencyInjection;
 
+use Avado\MoodleAbstractionLibrary\Database\CapsuleManager;
 use DI\ContainerBuilder;
 
 /**
@@ -51,6 +52,8 @@ class Container
         $builder = new ContainerBuilder();
         $builder->addDefinitions($this->setup());
 
+        $this->buildCapsuleManager();
+
         return $builder->build();
     }
 
@@ -72,5 +75,24 @@ class Container
     protected function getAdditionalDependencies(): array
     {
         return include $this->componentDirectory.'/dependencyInjection.php';
+    }
+
+    /**
+     * In order for eloquent to work, we need to create a global capsule manager
+     * This probably doesn't belong here but will work in the short term
+     */
+    protected function buildCapsuleManager()
+    {
+        global $CFG;
+
+        $capsuleManager = new CapsuleManager(
+            $CFG->dbtype,
+            $CFG->dbhost,
+            $CFG->dbname,
+            $CFG->dbuser,
+            $CFG->dbpass,
+            $CFG->prefix
+        );
+        $capsuleManager->boot();
     }
 }
