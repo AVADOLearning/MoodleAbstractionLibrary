@@ -1,6 +1,6 @@
 <?php
 
-namespace Avado\MoodleAbstractionLibrary;
+namespace Avado\MoodleAbstractionLibrary\Entities;
 
 class Cohort extends BaseModel
 {
