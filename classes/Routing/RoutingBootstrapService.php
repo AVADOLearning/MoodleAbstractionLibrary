@@ -1,6 +1,6 @@
 <?php
 
-namespace Avado\MoodleAbstrationLibrary\Routing;
+namespace Avado\MoodleAbstractionLibrary\Routing;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader;
@@ -9,16 +9,16 @@ use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Config\FileLocator;
-use Avado\MoodleAbstrationLibrary\Routing\Controller\MoodleControllerResolver;
+use Avado\MoodleAbstractionLibrary\Routing\Controller\MoodleControllerResolver;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
- * Class RoutingBoostrapService
+ * Class RoutingBootstrapService
  * @package Avado\MoodleAbstrationLibrary
  */
-class RoutingBoostrapService
+class RoutingBootstrapService
 {
     /**
      * @var Router
@@ -36,19 +36,18 @@ class RoutingBoostrapService
     protected $requestContext;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $dependecyDeclarations;
+    protected $componentDirectory;
 
     /**
-     * RoutingBoostrapService constructor.
+     * RoutingBootstrapService constructor.
      * @param string $controllersPath
      * @param string $cacheDir
      */
-    public function __construct(string $controllersPath, array $dependecyDeclarations)
+    public function __construct(string $componentDirectory)
     {
-        $this->controllersPath = $controllersPath;
-        $this->dependecyDeclarations = $dependecyDeclarations;
+        $this->componentDirectory = $componentDirectory;
     }
 
     /**
@@ -72,7 +71,7 @@ class RoutingBoostrapService
 
             $httpKernel = new HttpKernel(
                 new EventDispatcher(),
-                new MoodleControllerResolver(null, $this->dependecyDeclarations)
+                new MoodleControllerResolver(null, $this->componentDirectory)
             );
             $httpKernel->handle($request)->send();
         } catch (ResourceNotFoundException $e) {
@@ -120,7 +119,7 @@ class RoutingBoostrapService
     {
         return new Router(
             $this->getLoader(),
-            $this->controllersPath,
+            $this->componentDirectory.'/classes/Controllers',
             [],
             $this->getRequestContext()
         );

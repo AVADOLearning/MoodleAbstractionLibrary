@@ -1,12 +1,12 @@
 <?php
 
-namespace Avado\MoodleAbstrationLibrary\DependencyInjection;
+namespace Avado\MoodleAbstractionLibrary\DependencyInjection;
 
 use DI\ContainerBuilder;
 
 /**
  * Class Container
- * @package Avado\MoodleAbstrationLibrary\DependencyInjection
+ * @package Avado\MoodleAbstractionLibrary\DependencyInjection
  */
 class Container
 {
