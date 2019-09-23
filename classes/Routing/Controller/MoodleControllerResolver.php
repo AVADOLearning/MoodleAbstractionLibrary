@@ -4,6 +4,7 @@ namespace Avado\MoodleAbstractionLibrary\Routing\Controller;
 
 use Psr\Log\LoggerInterface;
 use Avado\MoodleAbstractionLibrary\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 
 class MoodleControllerResolver extends ControllerResolver
@@ -14,13 +15,21 @@ class MoodleControllerResolver extends ControllerResolver
     protected $componentDirectory;
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * MoodleControllerResolver constructor.
      * @param LoggerInterface|null $logger
      * @param string $componentDirectory
+     * @param Request $request
      */
-    public function __construct(LoggerInterface $logger = null, string $componentDirectory)
+    public function __construct(LoggerInterface $logger = null, string $componentDirectory, Request $request)
     {
         $this->componentDirectory = $componentDirectory;
+        $this->request = $request;
+
         parent::__construct($logger);
     }
 
@@ -31,8 +40,9 @@ class MoodleControllerResolver extends ControllerResolver
      */
     protected function instantiateController($class)
     {
-        $container = new Container($this->componentDirectory);
+        $container = (new Container($this->componentDirectory))->get($class);
+        $container->setRequest($this->request);
 
-        return $container->get($class);
+        return $container;
     }
 }

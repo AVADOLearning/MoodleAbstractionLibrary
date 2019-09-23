@@ -71,7 +71,7 @@ class RoutingBootstrapService
 
             $httpKernel = new HttpKernel(
                 new EventDispatcher(),
-                new MoodleControllerResolver(null, $this->componentDirectory)
+                new MoodleControllerResolver(null, $this->componentDirectory, $request)
             );
             $httpKernel->handle($request)->send();
         } catch (ResourceNotFoundException $e) {
