@@ -16,7 +16,8 @@
     "symfony/config": "^4.3",
     "sensio/framework-extra-bundle": "^5.4",
     "illuminate/database": "^6.0",
-    "lonebeta/moodle-abstraction-library": "*"
+    "lonebeta/moodle-abstraction-library": "*",
+    "illuminate/pagination": "6.0"
   },
   "autoload": {
     "psr-4": {

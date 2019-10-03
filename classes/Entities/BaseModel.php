@@ -2,6 +2,7 @@
 
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
+use Avado\MoodleAbstractionLibrary\Database\Builder;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\ConnectionResolver;
 use Illuminate\Database\Eloquent\Model;
@@ -51,5 +52,16 @@ class BaseModel extends Model
     public function getConnectionName()
     {
         return 'default';
+    }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new Builder($query);
     }
 }

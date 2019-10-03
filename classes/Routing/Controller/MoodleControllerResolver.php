@@ -42,6 +42,7 @@ class MoodleControllerResolver extends ControllerResolver
     {
         $container = (new Container($this->componentDirectory))->get($class);
         $container->setRequest($this->request);
+        $container->boot();
 
         return $container;
     }
