@@ -18,4 +18,9 @@ class User extends BaseModel
      * @var array
      */
     protected $hidden = ['password'];
+
+    public function enrolments()
+    {
+        return $this->hasMany(UserEnrolment::class, 'userid', 'id');
+    }
 }
