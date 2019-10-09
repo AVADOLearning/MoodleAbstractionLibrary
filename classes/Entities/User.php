@@ -30,4 +30,9 @@ class User extends BaseModel
     {
         return $this->hasMany(LearnerRelationship::class,'learnerid','id');
     }
+
+    public function roles()
+    {
+        return $this->hasManyThrough(Role::class, RoleAssignment::class, 'userid', 'id', 'id', 'roleid');
+    }
 }

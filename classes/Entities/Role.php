@@ -15,4 +15,9 @@ class Role extends BaseModel
     {
         return $this->belongsTo(Enrol::class, 'roleid', 'id');
     }
+
+    public function overrides()
+    {
+        return $this->hasManyThrough(Role::class, RoleAllowOverride::class, 'roleid', 'id', 'id', 'roleid');
+    }
 }
