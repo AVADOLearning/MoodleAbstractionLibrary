@@ -28,7 +28,7 @@ class User extends BaseModel
 
     public function relatedRoles()
     {
-        return $this->hasMany(LearnerRelationship::class,'learnerid','id');
+        return $this->hasMany(LearnerRelationship::class,'learner_id','id');
     }
 
     public function roles()
