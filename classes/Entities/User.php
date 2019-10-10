@@ -2,6 +2,8 @@
 
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
+use local\learner_relationships\Entities\LearnerRelationship;
+
 class User extends BaseModel
 {
     /**
@@ -22,5 +24,15 @@ class User extends BaseModel
     public function enrolments()
     {
         return $this->hasMany(UserEnrolment::class, 'userid', 'id');
+    }
+
+    public function relatedRoles()
+    {
+        return $this->hasMany(LearnerRelationship::class,'learnerid','id');
+    }
+
+    public function roles()
+    {
+        return $this->hasManyThrough(Role::class, RoleAssignment::class, 'userid', 'id', 'id', 'roleid');
     }
 }
