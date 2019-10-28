@@ -18,7 +18,7 @@ class CourseModuleCompletion extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function completions()
+    public function courseModule()
     {
         return $this->belongsTo(CourseModule::class, 'coursemoduleid', 'id');
     }
