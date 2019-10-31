@@ -38,6 +38,6 @@ class User extends BaseModel
 
     public function cohortMemberships()
     {
-        return $this->hasManyThrough(Cohort::class, CohortMember::class, 'id', 'userid', 'id', 'cohortid');
+        return $this->hasManyThrough(Cohort::class, CohortMember::class, 'userid', 'id', 'id', 'cohortid');
     }
 }
