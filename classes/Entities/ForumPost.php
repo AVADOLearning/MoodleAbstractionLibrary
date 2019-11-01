@@ -29,6 +29,4 @@ class ForumPost extends BaseModel
     {
         return $this->belongsTo(User::class,'userid', 'id');
     }
-
-
 }
