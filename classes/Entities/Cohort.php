@@ -4,5 +4,5 @@ namespace Avado\MoodleAbstractionLibrary\Entities;
 
 class Cohort extends BaseModel
 {
-    protected $table = 'cohorts';
+    protected $table = 'cohort';
 }
