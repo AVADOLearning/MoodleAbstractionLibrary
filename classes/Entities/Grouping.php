@@ -3,11 +3,14 @@
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
 /**
- * Class CohortMember
+ * Class Grouping
  *
  * @package Avado\MoodleAbstractionLibrary\Entities
  */
-class CohortMember extends BaseModel
+class Grouping extends BaseModel
 {
-    protected $table = 'cohort_members';
+    /**
+     * @var string
+     */
+    protected $table = 'groupings';
 }
