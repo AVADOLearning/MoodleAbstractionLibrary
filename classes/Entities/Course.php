@@ -22,5 +22,9 @@ class Course extends BaseModel
     {
         return $this->hasMany(CourseModule::class, 'course', 'id');
     }
-}
 
+    public function category()
+    {
+        return $this->hasOne(CourseCategory::class, 'id', 'category');
+    }
+}
