@@ -2,6 +2,8 @@
 
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
+use local_cohortmanagement\Entities\CourseCohortSync;
+
 /**
  * Class Course
  * @package Avado\MoodleAbstractionLibrary\Entities
@@ -26,5 +28,13 @@ class Course extends BaseModel
     public function category()
     {
         return $this->hasOne(CourseCategory::class, 'id', 'category');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function courseCohortSyncs()
+    {
+        return $this->hasMany(CourseCohortSync::class,'courseid','id');
     }
 }
