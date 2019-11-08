@@ -5,7 +5,7 @@ namespace Avado\MoodleAbstractionLibrary\Entities;
 /**
  * Class UserPreferences
  *
- * @package local\dashboard\Entities
+ * @package Avado\MoodleAbstractionLibrary\Entities
  */
 class UserPreferences extends BaseModel
 {
