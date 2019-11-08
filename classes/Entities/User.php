@@ -40,4 +40,16 @@ class User extends BaseModel
     {
         return $this->hasManyThrough(Cohort::class, CohortMember::class, 'userid', 'id', 'id', 'cohortid');
     }
+
+    /**
+     * Get the last access course of user
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function lastAccessCourse()
+    {
+        return $this->hasMany(UserLastaccess::class, 'userid', 'id')
+            ->orderBy('timeaccess', 'desc')
+            ->limit(1);
+    }
 }
