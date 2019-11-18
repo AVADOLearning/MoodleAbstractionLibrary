@@ -86,4 +86,13 @@ class MoodleUser
 
         return $USER;
     }
+
+    /**
+     * @param int $userId
+     * @return bool
+     */
+    public function isLoggedIn(int $userId): bool
+    {
+        return $userId === intval($this->getActiveUser()->id);
+    }
 }
