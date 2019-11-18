@@ -93,6 +93,6 @@ class MoodleUser
      */
     public function isLoggedIn(int $userId): bool
     {
-        return $userId === $this->getActiveUser()->id;
+        return $userId === intval($this->getActiveUser()->id);
     }
 }
