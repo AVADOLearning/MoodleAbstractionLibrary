@@ -2,6 +2,8 @@
 
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
+use Illuminate\Database\Eloquent\Builder;
+
 /**
  * Class Message
  * @package Avado\MoodleAbstractionLibrary\Entities
