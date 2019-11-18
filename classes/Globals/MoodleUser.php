@@ -24,6 +24,7 @@ class MoodleUser
     {
         $this->db = $db;
     }
+
     /**
      * @param $name
      * @param $arguments
@@ -84,5 +85,14 @@ class MoodleUser
         global $USER;
 
         return $USER;
+    }
+
+    /**
+     * @param int $userId
+     * @return bool
+     */
+    public function isLoggedIn(int $userId): bool
+    {
+        return $userId === $this->getActiveUser()->id;
     }
 }
