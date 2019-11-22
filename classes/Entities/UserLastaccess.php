@@ -13,5 +13,3 @@ class UserLastaccess extends BaseModel
      */
     protected $table = 'user_lastaccess';
 }
-
-
