@@ -2,12 +2,12 @@
 
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
-class MessagePopup extends BaseModel
+class MessageRead extends BaseModel
 {
     /**
      * @var string
      */
-    protected $table = 'message_popup';
+    protected $table = 'message_read';
 
     /**
      * @var array
