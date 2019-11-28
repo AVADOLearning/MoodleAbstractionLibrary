@@ -6,7 +6,7 @@ namespace Avado\MoodleAbstractionLibrary\Entities;
  * Class UserLastaccess
  * @package Avado\MoodleAbstractionLibrary\Entities
  */
-class UserLastaccess extends BaseModel
+class UserLastAccess extends BaseModel
 {
     /**
      * @var string
