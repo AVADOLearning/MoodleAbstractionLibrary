@@ -12,5 +12,5 @@ class UserPreferences extends BaseModel
     /**
      * @var string
      */
-    protected $table = 'user_preferences';
+    protected $table = 'user_preferencess';
 }
