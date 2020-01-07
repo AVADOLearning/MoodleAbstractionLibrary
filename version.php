@@ -8,4 +8,4 @@ $plugin->version  = 2019091600;
 
 $plugin->maturity = MATURITY_ALPHA;
 
-$plugin->requires = 2017111300;
+$plugin->requires = 2017111301;
