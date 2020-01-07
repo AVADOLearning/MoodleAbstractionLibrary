@@ -3,14 +3,13 @@
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
 /**
- * Class UserPreferences
- *
+ * Class ConfigPlugin
  * @package Avado\MoodleAbstractionLibrary\Entities
  */
-class UserPreferences extends BaseModel
+class ConfigPlugin extends BaseModel
 {
     /**
      * @var string
      */
-    protected $table = 'user_preferences';
+    protected $table = 'config_plugins';
 }
