@@ -13,7 +13,7 @@ class Role extends BaseModel
 
     public function enrol()
     {
-        return $this->belongsTo(Enrol::class, 'roleid', 'id');
+        return $this->belongsTo(Enrol::class, 'id', 'roleid');
     }
 
     public function overrides()
