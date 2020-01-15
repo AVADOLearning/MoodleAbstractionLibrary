@@ -31,10 +31,18 @@ class Course extends BaseModel
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function courseCohortSyncs()
     {
         return $this->hasMany(CourseCohortSync::class,'courseid','id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function enrol(){
+        return $this->hasMany(Enrol::class,'courseid','id');
+    }
+
 }
