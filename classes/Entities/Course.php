@@ -41,7 +41,7 @@ class Course extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function enrol(){
+    public function enrolments(){
         return $this->hasMany(Enrol::class,'courseid','id');
     }
 
