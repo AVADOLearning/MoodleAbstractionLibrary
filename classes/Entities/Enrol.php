@@ -31,13 +31,4 @@ class Enrol extends BaseModel
         return $this->belongsTo(Course::class,'courseid','id');
     }
 
-    /**
-     * Get all the enrol id for the user enrolled
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function userEnrolment(){
-        return $this->hasMany(UserEnrolment::class,'enrolid','id');
-    }
-
 }
