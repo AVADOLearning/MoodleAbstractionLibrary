@@ -11,13 +11,6 @@ class CourseCategory extends BaseModel
     protected $table = 'course_categories';
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function subCategory(){
-        return $this->hasMany(CourseCategory::class,'parent','id');
-    }
-
-    /**
      * Get the HelpdeskProductCourses that the Coursecategory belong to
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
