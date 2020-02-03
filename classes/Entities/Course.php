@@ -48,14 +48,4 @@ class Course extends BaseModel
         return $this->hasMany(Enrol::class,'courseid','id');
     }
 
-
-    /**
-     * Get all the enrol id for the user enrolled
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function userEnrolment(){
-        return $this->hasManyThrough(HelpdeskProduct::class, HelpdeskProductCourse::class, 'coursecategoryid', 'id', 'id', 'id');
-    }
-
 }
