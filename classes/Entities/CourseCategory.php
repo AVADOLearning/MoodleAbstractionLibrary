@@ -15,7 +15,8 @@ class CourseCategory extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function helpdeskProductCourses(){
+    public function helpdeskProductCourses()
+    {
         return $this->belongsTo(HelpdeskProductCourses::class,'coursecategoryid','id');
     }
 

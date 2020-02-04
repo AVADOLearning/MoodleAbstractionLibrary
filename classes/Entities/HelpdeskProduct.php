@@ -18,7 +18,8 @@ class HelpdeskProduct extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
-    public function productCategories(){
+    public function productCategories()
+    {
         return $this->hasManyThrough(HelpdeskProduct::class, HelpdeskProductCourse::class, 'coursecategoryid', 'id', 'id', 'id');
     }
 
