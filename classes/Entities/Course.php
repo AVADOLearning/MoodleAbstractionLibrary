@@ -27,4 +27,11 @@ class Course extends BaseModel
     {
         return $this->hasOne(CourseCategory::class, 'id', 'category');
     }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function enrolments()
+    {
+        return $this->hasManyThrough(UserEnrolment::class,Enrol::class,'courseid','enrolid','id','id');
+    }
 }
