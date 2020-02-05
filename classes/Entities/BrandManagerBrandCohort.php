@@ -18,6 +18,6 @@ class BrandManagerBrandCohort extends BaseModel
      */
     public function brand()
     {
-        return $this->belongsTo(BrandManagerBrand::class,'brandid','id');
+        return $this->belongsTo(BrandManagerBrand::class, 'brandid', 'id');
     }
 }
