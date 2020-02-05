@@ -2,6 +2,8 @@
 
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
+use local_cohortmanagement\Entities\CourseCohortSync;
+
 /**
  * Class Group
  *
@@ -14,4 +16,11 @@ class Group extends BaseModel
      */
     protected $table = 'groups';
 
+    /**
+     * @return mixed
+     */
+    public function courseCohortSyncs()
+    {
+        return $this->hasMany(CourseCohortSync::class,'groupid','id');
+    }
 }
