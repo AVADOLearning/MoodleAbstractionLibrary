@@ -8,6 +8,9 @@ namespace Avado\MoodleAbstractionLibrary\Entities;
  */
 class BrandManagerBrandCohort extends BaseModel
 {
+    /**
+     * @var string
+     */
     protected $table = 'brandmanager_brand_cohort';
 
     /**
