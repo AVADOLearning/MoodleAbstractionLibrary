@@ -12,7 +12,7 @@ class ForumDiscussion extends BaseModel
     /**
      * @var string
      */
-    protected $table = 'forum_discussion';
+    protected $table = 'forum_discussions';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

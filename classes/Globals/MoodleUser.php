@@ -24,6 +24,7 @@ class MoodleUser
     {
         $this->db = $db;
     }
+
     /**
      * @param $name
      * @param $arguments
