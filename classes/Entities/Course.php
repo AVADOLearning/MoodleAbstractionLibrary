@@ -16,7 +16,7 @@ class Course extends BaseModel
     protected $table = 'course';
 
     /**
-     * Get all the CourseModule objects that belond to this Course object
+     * Get all the CourseModule for Course
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

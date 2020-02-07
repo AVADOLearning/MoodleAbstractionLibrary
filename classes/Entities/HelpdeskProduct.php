@@ -14,13 +14,13 @@ class HelpdeskProduct extends BaseModel
     protected $table = 'helpdesk_products';
 
     /**
-     * Get the course_categories id, via the helpdesk_product_courses table
+     * Get all the HelpdeskProductCourse for HelpdeskProduct
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function productCategories()
+    public function productCourses()
     {
-        return $this->hasManyThrough(HelpdeskProduct::class, HelpdeskProductCourse::class, 'coursecategoryid', 'id', 'id', 'id');
+        return $this->hasMany(HelpdeskProductCourse::class, 'productid', 'id');
     }
 
 }
