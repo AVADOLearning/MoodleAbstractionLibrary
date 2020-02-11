@@ -37,4 +37,12 @@ class Course extends BaseModel
     {
         return $this->hasMany(CourseCohortSync::class,'courseid','id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function enrolments()
+    {
+        return $this->hasManyThrough(UserEnrolment::class,Enrol::class, 'courseid', 'enrolid', 'id', 'id');
+    }
 }
