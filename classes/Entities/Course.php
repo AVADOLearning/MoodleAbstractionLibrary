@@ -42,9 +42,11 @@ class Course extends BaseModel
     }
 
     /**
+     * Get the enrolment type for a course
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function enrolments()
+    public function enrolmentType()
     {
         return $this->hasMany(Enrol::class,'courseid','id');
     }
