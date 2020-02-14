@@ -16,7 +16,7 @@ class Course extends BaseModel
     protected $table = 'course';
 
     /**
-     * Get all the CourseModule objects that belond to this Course object
+     * Get all the CourseModule for Course
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -25,16 +25,30 @@ class Course extends BaseModel
         return $this->hasMany(CourseModule::class, 'course', 'id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function category()
     {
         return $this->hasOne(CourseCategory::class, 'id', 'category');
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function courseCohortSyncs()
     {
         return $this->hasMany(CourseCohortSync::class,'courseid','id');
     }
+
+    /**
+     * Get the enrolment type for a course
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function enrolmentType()
+    {
+        return $this->hasMany(Enrol::class,'courseid','id');
+    }
+
 }
