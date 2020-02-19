@@ -10,6 +10,14 @@ class Assign extends BaseModel
     protected $table = 'assign';
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course', 'id');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function assignGrades()
@@ -49,11 +57,17 @@ class Assign extends BaseModel
         return $this->hasMany(AssignUserFlag::class, 'assignment', 'id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function assignUserMapping()
     {
         return $this->hasMany(AssignUserMapping::class, 'assignment', 'id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function assignFeedbackComments()
     {
         return $this->hasMany(AssignFeedbackComments::class, 'assignment', 'id');
