@@ -30,4 +30,5 @@ class Enrol extends BaseModel
     {
         return $this->belongsTo(Course::class,'courseid','id');
     }
+
 }
