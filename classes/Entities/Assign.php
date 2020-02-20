@@ -30,7 +30,7 @@ class Assign extends BaseModel
      */
     public function assignOverrides()
     {
-        return $this->hasMany(AssignOverrides::class, 'assignment', 'id');
+        return $this->hasMany(AssignOverrides::class, 'assignid', 'id');
     }
 
     /**
