@@ -66,10 +66,10 @@ class Assign extends BaseModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
     public function assignFeedbackComments()
     {
-        return $this->hasMany(AssignFeedbackComments::class, 'assignment', 'id');
+        return $this->hasManyThrough(AssignFeedbackComments::class, AssignGrades::class, 'assignment', 'grade', 'id', 'id');
     }
 }

@@ -24,6 +24,6 @@ class AssignGrades extends BaseModel
      */
     public function assignGradesAssignFeedbackComments()
     {
-       return $this->hasMany(AssignFeedbackComments::class, 'grade', 'id');
+       return $this->hasOne(AssignFeedbackComments::class, 'grade', 'id');
     }
 }
