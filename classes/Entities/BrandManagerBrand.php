@@ -16,7 +16,7 @@ class BrandManagerBrand extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function cohorts()
+    public function brandCohorts()
     {
         return $this->hasMany(BrandManagerBrandCohort::class, 'brandid', 'id');
     }
