@@ -42,6 +42,14 @@ class Course extends BaseModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function enrolments()
+    {
+        return $this->hasManyThrough(UserEnrolment::class,Enrol::class, 'courseid', 'enrolid', 'id', 'id');
+    }
+
+    /**
      * Get the enrolment type for a course
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -50,5 +58,4 @@ class Course extends BaseModel
     {
         return $this->hasMany(Enrol::class,'courseid','id');
     }
-
 }
