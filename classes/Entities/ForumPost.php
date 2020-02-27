@@ -17,7 +17,7 @@ class ForumPost extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function discussion()
+    public function discussionforum()
     {
         return $this->belongsTo(ForumDiscussion::class, 'discussion', 'id');
     }
