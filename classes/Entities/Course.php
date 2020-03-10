@@ -58,4 +58,12 @@ class Course extends BaseModel
     {
         return $this->hasMany(Enrol::class,'courseid','id');
     }
+
+    /**
+    * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function formatOption()
+    {
+        return $this->hasMany(CourseFormatOption::class,'courseid','id');
+    }
 }
