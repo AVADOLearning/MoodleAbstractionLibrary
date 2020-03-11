@@ -62,7 +62,7 @@ class Course extends BaseModel
     /**
     * @return \Illuminate\Database\Eloquent\Relations\HasMany
     */
-    public function formatOption()
+    public function formatOptions()
     {
         return $this->hasMany(CourseFormatOption::class,'courseid','id');
     }
