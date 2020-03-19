@@ -58,4 +58,28 @@ class Course extends BaseModel
     {
         return $this->hasMany(Enrol::class,'courseid','id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function parentListing()
+    {
+        return $this->hasOne(ParentCourseVersion::class, 'course_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function childListing()
+    {
+        return $this->hasOne(ChildCourseVersion::class, 'course_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function listedChildren()
+    {
+        return $this->hasManyThrough(ChildCourseVersion::class, ParentCourseVersion::class, 'course_id', 'parent_version_id', 'id', 'id');
+    }
 }
