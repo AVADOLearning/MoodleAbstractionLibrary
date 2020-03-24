@@ -5,7 +5,7 @@ namespace Avado\MoodleAbstractionLibrary\Entities;
 /**
  * Class BadgeIssued
  *
- * @package local\leaderboards\Entities
+ * @package Avado\MoodleAbstractionLibrary\Entities
  */
 class BadgeIssued extends BaseModel
 {

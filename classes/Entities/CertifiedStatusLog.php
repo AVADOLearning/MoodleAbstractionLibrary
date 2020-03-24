@@ -5,7 +5,7 @@ namespace Avado\MoodleAbstractionLibrary\Entities;
 /**
  * Class CertifiedStatusLog
  *
- * @package local\leaderboards\Entities
+ * @package Avado\MoodleAbstractionLibrary\Entities
  */
 class CertifiedStatusLog extends BaseModel
 {
