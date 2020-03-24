@@ -1,8 +1,6 @@
 <?php
 
-namespace local\leaderboards\Entities;
-
-use Avado\MoodleAbstractionLibrary\Entities\BaseModel;
+namespace Avado\MoodleAbstractionLibrary\Entities;
 
 /**
  * Class CertifiedStatusLog
