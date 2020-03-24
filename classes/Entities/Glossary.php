@@ -12,5 +12,4 @@ class Glossary extends BaseModel
      * @var string
      */
     protected $table = 'glossary';
-
 }

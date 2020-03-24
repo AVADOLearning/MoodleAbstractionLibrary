@@ -8,5 +8,9 @@ namespace Avado\MoodleAbstractionLibrary\Entities;
  */
 class CourseSection extends BaseModel
 {
+    /**
+     * @var string
+     */
     protected $table = "course_sections";
 }
+

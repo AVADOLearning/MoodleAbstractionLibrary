@@ -13,3 +13,4 @@ class File extends BaseModel
      */
     protected $table = 'files';
 }
+

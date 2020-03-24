@@ -13,5 +13,3 @@ class Context extends BaseModel
      */
     protected $table = 'context';
 }
-
-;

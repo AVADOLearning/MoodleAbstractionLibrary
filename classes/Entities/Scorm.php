@@ -13,3 +13,4 @@ class Scorm extends BaseModel
      */
     protected $table = 'scorm';
 }
+
