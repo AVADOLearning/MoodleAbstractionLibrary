@@ -81,7 +81,7 @@ abstract class Controller
         $resources = (static::MODEL)::query();
 
         $queryParameters = $this->stripPaginationFields($this->request->query->all());
-    
+
         foreach ($queryParameters as $key => $value) {
             if($condition = $this->pullOperatorFromParameterKey($key)){
                 $resources->where(...$condition);
@@ -92,11 +92,30 @@ abstract class Controller
                 $resources->where($key, $value);
             }
         }
+        $resources = $this->addRelationshipsToSearch($resources, $this->request->get('strict'));
 
+        return $resources;
+    }
+
+    /**
+     * @param Builder $resources
+     * @param string $strictMode
+     * @return Builder
+     */
+    protected function addRelationshipsToSearch($resources, $strictMode = false)
+    {
         if($relationships = $this->request->get('relationships')){
+            if($strictMode === 'true'){
+                foreach (explode(',', $relationships) as $relationship) {
+                    $resources->has($relationship);
+                }
+            }else if($strictMode === 'inverse'){
+                foreach (explode(',', $relationships) as $relationship) {
+                    $resources->doesntHave($relationship);
+                }
+            }
             $resources->with(...explode(',', $relationships));
         }
-
         return $resources;
     }
 
@@ -142,7 +161,7 @@ abstract class Controller
      */
     protected function stripPaginationFields($queryParameters)
     {
-        $paginationFields = ['page','offset','limit','relationships'];
+        $paginationFields = ['page','offset','limit','relationships','strict'];
 
         return array_diff_key($queryParameters, array_flip($paginationFields));
     }

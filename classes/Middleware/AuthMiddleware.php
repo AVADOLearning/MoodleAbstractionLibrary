@@ -1,6 +1,6 @@
 <?php
 
-namespace Avado\AlpApi\Middleware;
+namespace Avado\MoodleAbstractionLibrary\Middleware;
 
 use Avado\AlpApi\Controllers\AuthController;
 use Symfony\Component\HttpFoundation\Request;

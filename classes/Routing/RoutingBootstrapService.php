@@ -2,9 +2,9 @@
 
 namespace Avado\MoodleAbstractionLibrary\Routing;
 
-use Avado\AlpApi\Middleware\ACLMiddleware;
-use Avado\AlpApi\Middleware\AuthMiddleware;
-use Avado\AlpApi\Middleware\ResourceCacheMiddleware;
+use Avado\MoodleAbstractionLibrary\Middleware\ACLMiddleware;
+use Avado\MoodleAbstractionLibrary\Middleware\AuthMiddleware;
+use Avado\MoodleAbstractionLibrary\Middleware\ResourceCacheMiddleware;
 use Avado\MoodleAbstractionLibrary\DependencyInjection\Container;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader;
@@ -22,8 +22,8 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener;
 use Doctrine\Common\Annotations\DocParser;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Avado\AlpApi\Listeners\MagicControllerArgumentsListener;
-use Avado\AlpApi\Listeners\AttachModelRelationshipsListener;
+use Avado\MoodleAbstractionLibrary\Listeners\MagicControllerArgumentsListener;
+use Avado\MoodleAbstractionLibrary\Listeners\AttachModelRelationshipsListener;
 
 /**
  * Class RoutingBootstrapService

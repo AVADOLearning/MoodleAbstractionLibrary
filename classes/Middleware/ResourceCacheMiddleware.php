@@ -35,11 +35,13 @@ class ResourceCacheMiddleware
     protected function passRequestToCache($request, $httpKernel)
     {
         $cache = new FilesystemTagAwareAdapter('', 1800, __DIR__);
-    
+
         $cacheId = $this->buildCacheId($request);
     
         $resource = $this->getResourceFromRequest($request);
         $resourceId = $request->attributes->get('id');
+        
+        $cache->invalidateTags([$resource]);
 
         return $cache->get($cacheId, function (ItemInterface $item) use ($resource, $resourceId, $httpKernel, $request)  {
             $item->tag([$resource, $resource.'_'.$resourceId]);
