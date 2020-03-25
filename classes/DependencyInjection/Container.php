@@ -68,7 +68,8 @@ class Container
 
         return array_merge([
             \moodle_database::class => $DB,
-            Logger::class => $this->buildLogger()
+            Logger::class => $this->buildLogger(),
+            \Predis\Client::class => $this->buildRedisClient()
         ], $this->getAdditionalDependencies());
     }
 
@@ -105,5 +106,12 @@ class Container
         $logger->pushHandler(new StreamHandler('php://stdout'));
 
         return $logger;
+    }
+
+    protected function buildRedisClient()
+    {
+        global $CFG;
+
+        return new \Predis\Client($CFG->redis_host);
     }
 }

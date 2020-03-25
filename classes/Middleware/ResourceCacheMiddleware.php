@@ -6,11 +6,19 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
+use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class ResourceCacheMiddleware
 {
+    /**
+     * @param Predis\Client $client
+     */
+    public function __construct(\Predis\Client $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * @param Request $request
      * @return mixed
@@ -34,7 +42,7 @@ class ResourceCacheMiddleware
      */
     protected function passRequestToCache($request, $httpKernel)
     {
-        $cache = new FilesystemTagAwareAdapter('', 1800, __DIR__);
+        $cache = new RedisTagAwareAdapter($this->client);
 
         $cacheId = $this->buildCacheId($request);
     
