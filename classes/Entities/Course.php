@@ -2,6 +2,8 @@
 
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
+use Avado\AlpApi\Entities\ACL\ChildCourseVersion;
+use Avado\AlpApi\Entities\ACL\ParentCourseVersion;
 use local_cohortmanagement\Entities\CourseCohortSync;
 
 /**
