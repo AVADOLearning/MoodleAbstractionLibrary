@@ -6,6 +6,8 @@ use Psr\Log\LoggerInterface;
 use Avado\MoodleAbstractionLibrary\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
+use Monolog\Logger;
 
 class MoodleControllerResolver extends ControllerResolver
 {
@@ -40,10 +42,12 @@ class MoodleControllerResolver extends ControllerResolver
      */
     protected function instantiateController($class)
     {
-        $container = (new Container($this->componentDirectory))->get($class);
-        $container->setRequest($this->request);
-        $container->boot();
+        $controller = (new Container($this->componentDirectory))->get($class);
+        $controller->setRequest($this->request);
+        $controller->setCacheAdapter(new FilesystemTagAwareAdapter(),[]);
+        $controller->setLogger((new Container($this->componentDirectory))->get(Logger::class));
+        $controller->boot();
 
-        return $container;
+        return $controller;
     }
 }

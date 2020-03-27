@@ -4,6 +4,8 @@ namespace Avado\MoodleAbstractionLibrary\DependencyInjection;
 
 use Avado\MoodleAbstractionLibrary\Database\CapsuleManager;
 use DI\ContainerBuilder;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 /**
  * Class Container
@@ -66,6 +68,8 @@ class Container
 
         return array_merge([
             \moodle_database::class => $DB,
+            Logger::class => $this->buildLogger(),
+            \Predis\Client::class => $this->buildRedisClient()
         ], $this->getAdditionalDependencies());
     }
 
@@ -94,5 +98,20 @@ class Container
             $CFG->prefix
         );
         $capsuleManager->boot();
+    }
+
+    protected function buildLogger()
+    {
+        $logger = new Logger('name');
+        $logger->pushHandler(new StreamHandler('php://stdout'));
+
+        return $logger;
+    }
+
+    protected function buildRedisClient()
+    {
+        global $CFG;
+
+        return new \Predis\Client($CFG->redis_host);
     }
 }
