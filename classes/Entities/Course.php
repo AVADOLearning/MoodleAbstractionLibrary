@@ -40,7 +40,7 @@ class Course extends BaseModel
      */
     public function courseCohortSyncs()
     {
-        return $this->hasMany(CourseCohortSync::class,'courseid','id');
+        return $this->hasMany(CourseCohortSync::class, 'courseid', 'id');
     }
 
     /**
@@ -48,7 +48,7 @@ class Course extends BaseModel
      */
     public function enrolments()
     {
-        return $this->hasManyThrough(UserEnrolment::class,Enrol::class, 'courseid', 'enrolid', 'id', 'id');
+        return $this->hasManyThrough(UserEnrolment::class, Enrol::class, 'courseid', 'enrolid', 'id', 'id');
     }
 
     /**
@@ -58,7 +58,7 @@ class Course extends BaseModel
      */
     public function enrolmentType()
     {
-        return $this->hasMany(Enrol::class,'courseid','id');
+        return $this->hasMany(Enrol::class, 'courseid', 'id');
     }
 
     /**
@@ -82,6 +82,14 @@ class Course extends BaseModel
      */
     public function listedChildren()
     {
-        return $this->hasManyThrough(ChildCourseVersion::class, ParentCourseVersion::class, 'course_id', 'parent_version_id', 'id', 'id');
+        return $this->hasManyThrough(ChildCourseVersion::class, ParentCourseVersion::class, 'course_id','parent_version_id', 'id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function formatOptions()
+    {
+        return $this->hasMany(CourseFormatOption::class, 'courseid', 'id');
     }
 }
