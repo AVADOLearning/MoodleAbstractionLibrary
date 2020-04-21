@@ -24,7 +24,7 @@ class BadgeIssued extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\belongsTo
      */
-    public function badges()
+    public function badge()
     {
         return $this->belongsTo(Badge::class, 'badgeid', 'id');
     }

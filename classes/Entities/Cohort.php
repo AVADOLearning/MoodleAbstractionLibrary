@@ -36,7 +36,7 @@ class Cohort extends BaseModel
     /**
      * @return mixed
      */
-    public function leaderboardsCohortSettings()
+    public function leaderboardCohortSettings()
     {
         return $this->hasOne(LeaderboardsCohortSettings::class, 'cohort_id', 'id');
     }
