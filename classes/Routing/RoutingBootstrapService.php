@@ -5,6 +5,7 @@ namespace Avado\MoodleAbstractionLibrary\Routing;
 use Avado\MoodleAbstractionLibrary\Middleware\ACLMiddleware;
 use Avado\MoodleAbstractionLibrary\Middleware\AuthMiddleware;
 use Avado\MoodleAbstractionLibrary\Middleware\ResourceCacheMiddleware;
+use Avado\MoodleAbstractionLibrary\Middleware\RateLimitMiddleware;
 use Avado\MoodleAbstractionLibrary\DependencyInjection\Container;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader;
@@ -58,10 +59,11 @@ class RoutingBootstrapService
      * @param string $controllersPath
      * @param string $cacheDir
      */
-    public function __construct(string $componentDirectory, bool $useEventsAndMiddleware = false)
+    public function __construct(string $componentDirectory, bool $useEventsAndMiddleware = false, string $cacheRoutingDirectory = null)
     {
         $this->componentDirectory = $componentDirectory;
         $this->useEventsAndMiddleware = $useEventsAndMiddleware;
+        $this->cacheRoutingDirectory = $cacheRoutingDirectory;
     }
     /**
      *
@@ -116,6 +118,7 @@ class RoutingBootstrapService
         }
         return $this->router;
     }
+    
     /**
      * @return AnnotationDirectoryLoader
      */
@@ -126,6 +129,7 @@ class RoutingBootstrapService
             new AnnotatedRouteControllerLoader(new AnnotationReader())
         );
     }
+
     /**
      * @return RequestContext
      */
@@ -136,6 +140,7 @@ class RoutingBootstrapService
         }
         return $this->requestContext;
     }
+    
     /**
      * @return Router
      */
@@ -143,11 +148,12 @@ class RoutingBootstrapService
     {
         return new Router(
             $this->getLoader(),
-            $this->componentDirectory.'/classes/Controllers',
-            [],
+            $this->componentDirectory.'/classes',
+            ['cache_dir'=> $this->cacheRoutingDirectory],
             $this->getRequestContext()
         );
     }
+
     /**
      * @return RequestContext
      */
@@ -157,12 +163,14 @@ class RoutingBootstrapService
         $requestContext->fromRequest(Request::createFromGlobals());
         return $requestContext;
     }
+    
     /**
      * @param $request
      */
     protected function passThroughMiddleware($request, $httpKernel)
     {
         $middlewares = [
+            RateLimitMiddleware::class,
             AuthMiddleware::class,
             ACLMiddleware::class,
             ResourceCacheMiddleware::class

@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Class AuthMiddleware
- * @package Avado\AlpApi\Middleware
+ * @package Avado\MoodleAbstractionLibrary\Middleware
  */
 class AuthMiddleware
 {

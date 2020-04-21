@@ -6,6 +6,7 @@ use Avado\MoodleAbstractionLibrary\Database\CapsuleManager;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Redis;
 
 /**
  * Class Container
@@ -69,7 +70,7 @@ class Container
         return array_merge([
             \moodle_database::class => $DB,
             Logger::class => $this->buildLogger(),
-            \Predis\Client::class => $this->buildRedisClient()
+            Redis::class => $this->buildRedisClient()
         ], $this->getAdditionalDependencies());
     }
 
@@ -112,6 +113,9 @@ class Container
     {
         global $CFG;
 
-        return new \Predis\Client($CFG->redis_host);
+        $redis = new Redis();
+        $redis->connect($CFG->redis_host, 6379);
+
+        return $redis;
     }
 }

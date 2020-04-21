@@ -24,6 +24,11 @@ class BaseModel extends Model
     protected $primaryKey = 'id';
 
     /**
+     * @var boolean
+     */
+    protected $observed = false;
+
+    /**
      * BaseModel constructor.
      * @param array $attributes
      */
@@ -32,6 +37,8 @@ class BaseModel extends Model
         parent::__construct($attributes);
 
         self::setConnectionResolver(new ConnectionResolver(['default' => Manager::connection('default')]));
+        
+        $this->setUpObserver();
     }
 
     /**
@@ -63,5 +70,15 @@ class BaseModel extends Model
     public function newEloquentBuilder($query)
     {
         return new Builder($query);
+    }
+
+    /**
+     * @return void
+     */
+    protected function setUpObserver(): void
+    {
+        if(!$this->observed && defined(static::class.'::OBSERVER')){
+            $this->registerObserver(static::OBSERVER);
+        }
     }
 }

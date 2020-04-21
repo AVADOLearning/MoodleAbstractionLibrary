@@ -18,7 +18,8 @@
     "illuminate/database": "^6.0",
     "lonebeta/moodle-abstraction-library": "*",
     "illuminate/pagination": "6.0",
-    "predis/predis": "^1.1"
+    "predis/predis": "^1.1",
+    "nikolaposa/rate-limit": "^2.0"
   },
   "autoload": {
     "psr-4": {

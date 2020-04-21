@@ -2,7 +2,7 @@
 
 namespace Avado\MoodleAbstractionLibrary\Middleware;
 
-use Avado\MoodleAbstractionLibrary\Controllers\AuthController;
+use Avado\AlpApi\Auth\Controllers\AuthController;
 use Avado\MoodleAbstractionLibrary\Entities\ACL\User;
 use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -12,9 +12,9 @@ use Symfony\Contracts\Cache\ItemInterface;
 class ResourceCacheMiddleware
 {
     /**
-     * @param Predis\Client $client
+     * @param Redis $client
      */
-    public function __construct(\Predis\Client $client)
+    public function __construct(\Redis $client)
     {
         $this->client = $client;
     }
