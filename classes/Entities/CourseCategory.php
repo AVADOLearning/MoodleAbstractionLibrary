@@ -19,5 +19,4 @@ class CourseCategory extends BaseModel
     {
         return $this->belongsTo(HelpdeskProductCourses::class,'coursecategoryid','id');
     }
-
 }

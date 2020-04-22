@@ -21,6 +21,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener;
+use Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener;
 use Doctrine\Common\Annotations\DocParser;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Avado\MoodleAbstractionLibrary\Listeners\MagicControllerArgumentsListener;
@@ -98,7 +99,6 @@ class RoutingBootstrapService
                     (new JsonResponse(['success'=>'false','message'=>$e->getMessage()]))->send();die;
                 }
             }
-
             $response = $httpKernel->handle($request)->send();
             
         } catch (ResourceNotFoundException $e) {
@@ -107,7 +107,7 @@ class RoutingBootstrapService
             (new JsonResponse(['success'=>'false','message'=>$e->getMessage()]))->send();die;
         }
     }
-
+    
     /**
      * @return null
      */
@@ -192,11 +192,13 @@ class RoutingBootstrapService
         }
 
         $controllerListener = new ControllerListener(new AnnotationReader(new DocParser()));
+        $httpCacheListener = new HttpCacheListener();
         $magicArgumentsListener = new MagicControllerArgumentsListener();
         $attachRelationshipsListener = new AttachModelRelationshipsListener();
         
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->addSubscriber($controllerListener);
+        $eventDispatcher->addSubscriber($httpCacheListener);
         $eventDispatcher->addSubscriber($magicArgumentsListener);
         $eventDispatcher->addSubscriber($attachRelationshipsListener);
 

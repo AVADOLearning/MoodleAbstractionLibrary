@@ -114,7 +114,7 @@ class Container
         global $CFG;
 
         $redis = new Redis();
-        $redis->connect($CFG->redis_host, 6379);
+        $redis->connect(...$CFG->redis_host);
 
         return $redis;
     }
