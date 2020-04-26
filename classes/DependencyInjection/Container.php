@@ -50,7 +50,7 @@ class Container
      * @return \DI\Container
      * @throws \Exception
      */
-    protected function buildContainer(): \DI\Container
+    public function buildContainer(): \DI\Container
     {
         $builder = new ContainerBuilder();
         $builder->addDefinitions($this->setup());

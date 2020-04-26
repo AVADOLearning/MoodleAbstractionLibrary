@@ -19,11 +19,13 @@
     "lonebeta/moodle-abstraction-library": "*",
     "illuminate/pagination": "6.0",
     "predis/predis": "^1.1",
-    "nikolaposa/rate-limit": "^2.0"
+    "nikolaposa/rate-limit": "^2.0",
+    "psy/psysh": "^0.10.3"
   },
   "autoload": {
     "psr-4": {
       "Avado\\MoodleAbstractionLibrary\\": "classes/"
     }
-  }
+  },
+  "description": ""
 }
