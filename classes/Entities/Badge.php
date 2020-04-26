@@ -3,16 +3,16 @@
 namespace Avado\MoodleAbstractionLibrary\Entities;
 
 /**
- * Class BadgeIssued
+ * Class Badge
  *
  * @package Avado\MoodleAbstractionLibrary\Entities
  */
-class BadgeIssued extends BaseModel
+class Badge extends BaseModel
 {
     /**
      * @var string
      */
-    protected $table = 'badge_issued';
+    protected $table = 'badge';
 
     /**
      * The attributes that aren't mass assignable.
@@ -20,12 +20,4 @@ class BadgeIssued extends BaseModel
      * @var array
      */
     protected $guarded = ['id'];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
-     */
-    public function badge()
-    {
-        return $this->belongsTo(Badge::class, 'badgeid', 'id');
-    }
 }
