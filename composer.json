@@ -22,8 +22,8 @@
     "symfony/cache": "^5.0",
     "monolog/monolog": "^2.0",
     "firebase/php-jwt": "^5.2",
-    "symfony/validator": "^4.4",
-    "symfony/translation": "4.3.8"
+    "symfony/validator": "^5.0",
+    "symfony/translation-contracts": "^1.1.7"
   },
   "autoload": {
     "psr-4": {
