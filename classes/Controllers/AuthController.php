@@ -45,17 +45,37 @@ class AuthController extends Controller
         if($this->verifyPassword($user, $password)){
             return new JsonResponse([
                 'success'=>'true',
-                'token' => JWT::encode($this->buildPayload($user), AuthMiddleware::JWT_KEY)
+                'accesstoken' => JWT::encode($this->buildAccessToken($user), AuthMiddleware::JWT_KEY),
+                'refreshtoken' => JWT::encode($this->buildRefreshToken($user), AuthMiddleware::JWT_KEY)
             ]);
         }
         return new JsonResponse(['success'=>'false', 'message'=>'Incorrect user details supplied.']);
     }
 
     /**
+     * @Route("/refresh", methods={"POST"})
+     */
+    public function refresh()
+    {
+        $refreshToken = $this->request->headers->get('refreshtoken');
+
+        $user = $this->pullUserFromRefreshToken($refreshToken, $this->request->server->get('SERVER_NAME'));
+
+        if($refreshToken && $user){
+            return new JsonResponse([
+                'success'=>'true',
+                'accesstoken' => JWT::encode($this->buildAccessToken($user), AuthMiddleware::JWT_KEY),
+                'refreshtoken' => JWT::encode($this->buildRefreshToken($user), AuthMiddleware::JWT_KEY)
+            ]);
+        }
+        return new JsonResponse(['success'=>'false', 'message'=>'Invalid refresh token provided']);
+    }
+
+    /**
      * @param User $user
      * @return array
      */
-    public function buildPayload(User $user)
+    public function buildAccessToken(User $user)
     {
         return [
             'user'=> [
@@ -63,7 +83,23 @@ class AuthController extends Controller
                 'firstname' => $user->firstname,
                 'lastname' => $user->lastname
             ],
-            'courses' => $user->enrolments()->pluck('id')
+            'expiry' => time() + 900,
+            'type' => 'accesstoken',
+            'host' => $this->request->server->get('SERVER_NAME')
+        ];
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function buildRefreshToken(User $user)
+    {
+        return [
+            'userId' => $user->id,
+            'expiry' => time() + 5184000,
+            'type' => 'refreshtoken',
+            'host' => $this->request->server->get('SERVER_NAME')
         ];
     }
 
@@ -75,5 +111,19 @@ class AuthController extends Controller
     public function verifyPassword($user, $password)
     {
         return password_verify($password, $user->password);
+    }
+
+    /**
+     * @param string $token
+     * @return void
+     */
+    protected function pullUserFromRefreshToken($token, $host)
+    {
+        $token = JWT::decode($token, AuthMiddleware::JWT_KEY, [AuthMiddleware::ALGORITHM]);
+
+        if($token->expiry > time() && $token->host == $host && $token->type == 'refreshtoken'){
+            return User::find($token->userId);
+        }
+        return false;
     }
 }

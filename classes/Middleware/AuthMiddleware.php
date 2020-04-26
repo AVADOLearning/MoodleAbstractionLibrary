@@ -2,7 +2,7 @@
 
 namespace Avado\MoodleAbstractionLibrary\Middleware;
 
-use Avado\AlpApi\Controllers\AuthController;
+use Avado\AlpApi\Auth\Controllers\AuthController;
 use Symfony\Component\HttpFoundation\Request;
 use \Firebase\JWT\JWT;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -29,16 +29,9 @@ class AuthMiddleware
      */
     public function handle(Request $request)
     {
-        if($this->isAuthRequest($request)){
-            return true;
-        }
-
-        $token = $request->headers->get('token');
-
         try {
-            JWT::decode($token, self::JWT_KEY, [self::ALGORITHM]);
-
-            return true;
+            return $this->tokenIsValid($request->headers->get('accesstoken'), $request->server->get('SERVER_NAME'), 'accesstoken') ||
+                   $this->tokenIsValid($request->headers->get('refreshtoken'), $request->server->get('SERVER_NAME'), 'refreshtoken');
         } catch (\Exception $e){
             throw new AccessDeniedHttpException("You have provided an invalid token.");
         }
@@ -53,5 +46,20 @@ class AuthMiddleware
         $controller = explode('::', $request->attributes->get('_controller'))[0];
 
         return $controller == AuthController::class;
+    }
+
+    /**
+     * @param string $token
+     * @return void
+     */
+    protected function tokenIsValid($token, $host, $type)
+    {
+        try {
+            $token = JWT::decode($token, self::JWT_KEY, [self::ALGORITHM]);
+    
+            return $token->expiry < time() && $token->host == $host && $token->type == $type;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
+use Avado\AlpApi\Auth\Controllers\AuthController;
 
 class ResourceCacheMiddleware
 {

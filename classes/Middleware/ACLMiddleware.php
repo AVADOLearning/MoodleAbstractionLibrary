@@ -23,7 +23,7 @@ class ACLMiddleware
             return true;
         }
 
-        $token = $this->validateAndDecodeToken($request->headers->get('token'));
+        $token = $this->validateAndDecodeToken($request->headers->get('accesstoken'));
 
         $controllerMethod = $this->getControllerMethod($request);
         $controllerModel = $this->getControllerModel($request);

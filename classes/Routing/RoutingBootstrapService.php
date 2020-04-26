@@ -26,6 +26,9 @@ use Doctrine\Common\Annotations\DocParser;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Avado\MoodleAbstractionLibrary\Listeners\MagicControllerArgumentsListener;
 use Avado\MoodleAbstractionLibrary\Listeners\AttachModelRelationshipsListener;
+// use Avado\MoodleAbstractionLibrary\Validation\Constraints\UniqueEntity;
+
+// $uniqueEntity = new UniqueEntity();
 
 /**
  * Class RoutingBootstrapService
@@ -66,6 +69,7 @@ class RoutingBootstrapService
         $this->useEventsAndMiddleware = $useEventsAndMiddleware;
         $this->cacheRoutingDirectory = $cacheRoutingDirectory;
     }
+    
     /**
      *
      */
@@ -102,9 +106,9 @@ class RoutingBootstrapService
             $response = $httpKernel->handle($request)->send();
             
         } catch (ResourceNotFoundException $e) {
-            (new JsonResponse(['success'=>'false','message'=>$e->getMessage()]))->send();die;
+            (new JsonResponse(['success'=>'false','message'=> $e->getMessage()]))->send();die;
         } catch (\Exception $e){
-            (new JsonResponse(['success'=>'false','message'=>$e->getMessage()]))->send();die;
+            (new JsonResponse(['success'=>'false','message'=> $e->getMessage()]))->send();die;
         }
     }
     
@@ -170,8 +174,8 @@ class RoutingBootstrapService
     protected function passThroughMiddleware($request, $httpKernel)
     {
         $middlewares = [
-            RateLimitMiddleware::class,
             AuthMiddleware::class,
+            RateLimitMiddleware::class,
             ACLMiddleware::class,
             ResourceCacheMiddleware::class
         ];
