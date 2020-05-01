@@ -80,7 +80,7 @@ class Course extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
-    public function listedChildren()
+    public function childVersions()
     {
         return $this->hasManyThrough(ChildCourseVersion::class, ParentCourseVersion::class, 'course_id','parent_version_id', 'id', 'id');
     }
