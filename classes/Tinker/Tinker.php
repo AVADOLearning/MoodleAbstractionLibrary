@@ -2,6 +2,8 @@
 
 namespace Avado\MoodleAbstractionLibrary\Tinker;
 
+include_once __DIR__.'/../../vendor/autoload.php';
+
 use Avado\MoodleAbstractionLibrary\DependencyInjection\Container;
 use Psy\Configuration;
 use Psy\Shell;
@@ -9,7 +11,7 @@ use Psy\VersionUpdater\Checker;
 
 /**
  * Class Tinker
- * @package Avado\MoodleAbstractionLibrary
+ * @package Avado\MoodleAbstractionLibrary\Tinker
  */
 class Tinker {
 
@@ -37,7 +39,7 @@ class Tinker {
      * @param $currentDirectory
      * @param $config
      */
-    public function __construct($currentDirectory, $config = null)
+    public function __construct($currentDirectory, array $config = [])
     {
         $this->currentDirectory = $currentDirectory;
         $this->config = $config;
@@ -69,7 +71,7 @@ class Tinker {
      */
     protected function buildShellConfig()
     {
-        $config = new Configuration();
+        $config = new Configuration($this->config);
         $config->setUpdateCheck(Checker::NEVER);
         $config->getPresenter()->addCasters($this->casters);
 
