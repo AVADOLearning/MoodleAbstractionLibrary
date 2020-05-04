@@ -162,7 +162,7 @@ abstract class Controller
      */
     protected function stripPaginationFields($queryParameters)
     {
-        $paginationFields = ['page','offset','limit','relationships','strict'];
+        $paginationFields = ['page','offset','limit','relationships','strict', 'sortAsc', 'sortDesc'];
 
         return array_diff_key($queryParameters, array_flip($paginationFields));
     }
