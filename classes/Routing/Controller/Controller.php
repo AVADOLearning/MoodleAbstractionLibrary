@@ -2,6 +2,7 @@
 
 namespace Avado\MoodleAbstractionLibrary\Routing\Controller;
 
+use Avado\MoodleAbstractionLibrary\Database\Builder;
 use Illuminate\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Cache\Adapter\AbstractTagAwareAdapter;
@@ -93,6 +94,7 @@ abstract class Controller
             }
         }
         $resources = $this->addRelationshipsToSearch($resources, $this->request->get('strict'));
+        $resources = $this->addSortByToSearch($resources);
 
         return $resources;
     }
@@ -161,8 +163,20 @@ abstract class Controller
      */
     protected function stripPaginationFields($queryParameters)
     {
-        $paginationFields = ['page','offset','limit','relationships','strict'];
+        $paginationFields = ['page','offset','limit','relationships','strict', 'sortBy', 'sortOrder'];
 
         return array_diff_key($queryParameters, array_flip($paginationFields));
+    }
+
+    /**
+     * @param Builder $resources
+     * @return Builder
+     */
+    protected function addSortByToSearch(Builder $resources)
+    {
+        return $resources->orderBy(
+            $this->request->get('sortBy') ?? 'id',
+            $this->request->get('sortOrder') ?? 'asc'
+        );
     }
 }
