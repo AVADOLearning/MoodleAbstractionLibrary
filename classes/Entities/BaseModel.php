@@ -14,6 +14,7 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class BaseModel
