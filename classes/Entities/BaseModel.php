@@ -117,7 +117,7 @@ class BaseModel extends Model
             $property = $exception->getPropertyPath();
             throw new \Exception("Provided $property is invalid: ".$exception->getMessage());
         }
-        parent::save();
+        return parent::save();
     }
 
     /**

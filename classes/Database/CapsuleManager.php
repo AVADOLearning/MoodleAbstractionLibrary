@@ -3,6 +3,8 @@
 namespace Avado\MoodleAbstractionLibrary\Database;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Container\Container;
+use Illuminate\Events\Dispatcher;
 
 /**
  * Class CapsuleManager
@@ -74,6 +76,7 @@ class CapsuleManager
             'prefix' => $this->prefix
         ]);
         $capsule->setAsGlobal();
+        $capsule->setEventDispatcher(new Dispatcher(new Container()));
         $capsule->bootEloquent();
     }
 }
