@@ -118,6 +118,22 @@ class BaseModel extends Model
     }
 
     /**
+     * Update the model in the database.
+     *
+     * @param  array  $attributes
+     * @param  array  $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = [])
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        return $this->fill($attributes)->save($options);
+    }
+
+    /**
      * Fill the model with an array of attributes.
      *
      * @param  array  $attributes
