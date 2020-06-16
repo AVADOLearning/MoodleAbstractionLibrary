@@ -91,17 +91,6 @@ class BaseModel extends Model
         }
     }
 
-    protected function buildValidator()
-    {
-        return new RecursiveValidator(
-            new ExecutionContextFactory(new Translator('en', null, '/avado_moodledata/assertcache')),
-            new LazyLoadingMetadataFactory(
-                new AnnotationLoader(new AnnotationReader())
-            ),
-            new ConstraintValidatorFactory()
-        );
-    }
-
     /**
      * Save the model to the database.
      *
@@ -110,15 +99,22 @@ class BaseModel extends Model
      */
     public function save(array $options = [])
     {
-        $validator = $this->buildValidator();
+        $this->removeChildrenFromAttributes();
 
+        $validator = $this->buildValidator();
         $valid = $validator->validate($this);
 
         foreach($validator->validate($this) as $exception){
             $property = $exception->getPropertyPath();
             throw new \Exception("Provided $property is invalid: ".$exception->getMessage());
         }
-        parent::save();
+
+        $saved = parent::save();
+        
+        if(defined('static::CHILDREN') && is_array(static::CHILDREN)){
+            $this->saveChildren(static::CHILDREN);
+        }
+        return $saved;
     }
 
     /**
@@ -143,6 +139,62 @@ class BaseModel extends Model
     }
 
     /**
+     * Recursively save the child relationships for this model
+     *
+     * @param array $children
+     * @param array $data
+     * @return void
+     */
+    protected function saveChildren(array $children, array $data = null)
+    {
+        foreach ($children as $childRelationship => $childClass) {
+            $this->$childRelationship()->saveMany(
+                array_map(function($child) use ($childClass){
+                    if($child['id']){
+                        $childId = $child['id'];
+                        unset($child['id']);
+                        return $childClass::find($childId)->fill($child);
+                    }
+                    return new $childClass($child);
+                }, $this->objectToArray($data ?? $this->$childRelationship))
+            );
+
+            if(defined('$childClass::CHILDREN') && is_array($childClass::CHILDREN)){
+                $this->saveChildren($childClass::CHILDREN, $data->$childRelationship);
+            }
+        }
+    }
+
+    /**
+     * Strip child items from the models attributes array as we don't need them
+     *
+     * @return void
+     */
+    protected function removeChildrenFromAttributes()
+    {
+        if(defined('static::CHILDREN') && is_array(static::CHILDREN)){
+            foreach(static::CHILDREN as $childRelationship => $childClass){
+                unset($this->attributes[$childRelationship]);
+            }
+        }
+    }
+
+    /**
+     *
+     * @return void
+     */
+    protected function buildValidator()
+    {
+        return new RecursiveValidator(
+            new ExecutionContextFactory(new Translator('en', null, '/avado_moodledata/assertcache')),
+            new LazyLoadingMetadataFactory(
+                new AnnotationLoader(new AnnotationReader())
+            ),
+            new ConstraintValidatorFactory()
+        );
+    }
+
+    /**
      * Dynamically set attributes on the model.
      *
      * @param  string  $key
@@ -154,5 +206,10 @@ class BaseModel extends Model
         $this->$key = $value;
 
         parent::__set($key, $value);
+    }
+
+    protected function objectToArray($object)
+    {
+        return json_decode(json_encode($object), true);
     }
 }

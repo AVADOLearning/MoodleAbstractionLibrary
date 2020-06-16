@@ -42,6 +42,6 @@ class User extends BaseModel
     {
         return $this->whereHas('roles.permissions', function($query) use ($permission){
             $query->where('name', $permission);
-        })->exists();
+        })->where('id', $this->id)->exists();
     }
 }
