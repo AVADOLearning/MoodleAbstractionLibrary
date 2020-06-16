@@ -195,6 +195,34 @@ class BaseModel extends Model
     }
 
     /**
+     * Register a single observer with the model.
+     *
+     * @param  object|string  $class
+     * @return void
+     *
+     * @throws \RuntimeException
+     */
+    protected function registerObserver($class)
+    {
+        foreach ($this->getObservableEvents() as $event) {
+            if (method_exists($class, $event) && !$this->isObserved($event)) {
+                static::registerModelEvent($event, $class.'@'.$event);
+            }
+        }
+    }
+
+    /**
+     * Checks to see if the current event is already registered.
+     *
+     * @param String $event
+     * @return bool
+     */
+    protected function isObserved(String $event): bool
+    {
+        return static::$dispatcher->hasListeners("eloquent.{$event}: ".static::class);
+    }
+
+    /**
      * Dynamically set attributes on the model.
      *
      * @param  string  $key
