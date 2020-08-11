@@ -14,6 +14,7 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class BaseModel
@@ -117,6 +118,22 @@ class BaseModel extends Model
     }
 
     /**
+     * Update the model in the database.
+     *
+     * @param  array  $attributes
+     * @param  array  $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = [])
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        return $this->fill($attributes)->save($options);
+    }
+
+    /**
      * Fill the model with an array of attributes.
      *
      * @param  array  $attributes
@@ -191,6 +208,34 @@ class BaseModel extends Model
             ),
             new ConstraintValidatorFactory()
         );
+    }
+
+    /**
+     * Register a single observer with the model.
+     *
+     * @param  object|string  $class
+     * @return void
+     *
+     * @throws \RuntimeException
+     */
+    protected function registerObserver($class)
+    {
+        foreach ($this->getObservableEvents() as $event) {
+            if (method_exists($class, $event) && !$this->isObserved($event)) {
+                static::registerModelEvent($event, $class.'@'.$event);
+            }
+        }
+    }
+
+    /**
+     * Checks to see if the current event is already registered.
+     *
+     * @param String $event
+     * @return bool
+     */
+    protected function isObserved(String $event): bool
+    {
+        return static::$dispatcher->hasListeners("eloquent.{$event}: ".static::class);
     }
 
     /**

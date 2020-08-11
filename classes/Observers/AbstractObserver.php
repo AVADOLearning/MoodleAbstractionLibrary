@@ -11,7 +11,7 @@ abstract class AbstractObserver
     public function listen(array $events, array $arguments): bool
     {
         foreach ($events as $event) {
-            if($event->check()){
+            if($event->check($arguments)){
                 $event->handle($arguments);
             }
         }
