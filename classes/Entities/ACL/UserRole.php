@@ -14,4 +14,9 @@ class UserRole extends BaseModel
      * @var string
      */
     protected $table = 'acl_user_roles';
+
+    /**
+     * @var string[]
+     */
+    protected $fillable = ['user_id'];
 }
