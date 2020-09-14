@@ -105,14 +105,12 @@ class RoutingBootstrapService
 
                 } catch (HttpException $e) {
                     (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
-                    die;
                 }
             }
             $response = $httpKernel->handle($request)->send();
 
         } catch (ResourceNotFoundException $e) {
             (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
-            die;
         } catch (\Exception $e) {
             (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
             die;
