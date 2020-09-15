@@ -222,12 +222,10 @@ class RoutingBootstrapService
     protected function encodeQueryParams(Request $request): void
     {
         $encodedQueryKeys = array_map(function ($requestKeys) {
-            if (preg_match('/%([a-zA-Z].*?)%\d+/', urlencode($requestKeys), $escapeString) == 1) {
-                return str_replace(
-                    $escapeString[0],
-                    '%' . ucfirst(strtolower($escapeString[1])) . '%',
-                    urlencode($requestKeys)
-                );
+            if (preg_match('/[^\\w^%]+/', $requestKeys, $nonWordCharacter) == 1) {
+                $searchString = [$nonWordCharacter[0], '_'];
+                $replaceString = [ucwords(strtolower(urlencode($nonWordCharacter[0])), '%'), ' '];
+                return str_replace($searchString, $replaceString, $requestKeys);
             }
             return $requestKeys;
         }, $request->query->keys());
