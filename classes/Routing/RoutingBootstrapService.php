@@ -224,7 +224,7 @@ class RoutingBootstrapService
         $encodedQueryKeys = array_map(function ($requestKeys) {
             if (preg_match('/[^\\w^%]+/', $requestKeys, $nonWordCharacter) == 1) {
                 $searchString = [$nonWordCharacter[0], '_'];
-                $replaceString = [ucwords(strtolower(urlencode($nonWordCharacter[0])), '%'), ' '];
+                $replaceString = [strtolower(urlencode($nonWordCharacter[0])), ' '];
                 return str_replace($searchString, $replaceString, $requestKeys);
             }
             return $requestKeys;
