@@ -26,6 +26,7 @@ use Doctrine\Common\Annotations\DocParser;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Avado\MoodleAbstractionLibrary\Listeners\MagicControllerArgumentsListener;
 use Avado\MoodleAbstractionLibrary\Listeners\AttachModelRelationshipsListener;
+
 // use Avado\MoodleAbstractionLibrary\Validation\Constraints\UniqueEntity;
 
 // $uniqueEntity = new UniqueEntity();
@@ -63,13 +64,16 @@ class RoutingBootstrapService
      * @param string $controllersPath
      * @param string $cacheDir
      */
-    public function __construct(string $componentDirectory, bool $useEventsAndMiddleware = false, string $cacheRoutingDirectory = null)
-    {
+    public function __construct(
+        string $componentDirectory,
+        bool $useEventsAndMiddleware = false,
+        string $cacheRoutingDirectory = null
+    ) {
         $this->componentDirectory = $componentDirectory;
         $this->useEventsAndMiddleware = $useEventsAndMiddleware;
         $this->cacheRoutingDirectory = $cacheRoutingDirectory;
     }
-    
+
     /**
      *
      */
@@ -89,29 +93,30 @@ class RoutingBootstrapService
                 $_SERVER,
                 null
             );
-
+            $this->encodeQueryParams($request);
             $httpKernel = new HttpKernel(
                 $this->buildEventDispatcher(),
                 new MoodleControllerResolver(null, $this->componentDirectory, $request)
             );
 
-            if($this->useEventsAndMiddleware){
+            if ($this->useEventsAndMiddleware) {
                 try {
                     $this->passThroughMiddleware($request, $httpKernel);
-    
-                } catch (HttpException $e){
-                    (new JsonResponse(['success'=>'false','message'=>$e->getMessage()]))->send();die;
+
+                } catch (HttpException $e) {
+                    (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
                 }
             }
             $response = $httpKernel->handle($request)->send();
-            
+
         } catch (ResourceNotFoundException $e) {
-            (new JsonResponse(['success'=>'false','message'=> $e->getMessage()]))->send();die;
-        } catch (\Exception $e){
-            (new JsonResponse(['success'=>'false','message'=> $e->getMessage()]))->send();die;
+            (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
+        } catch (\Exception $e) {
+            (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
+            die;
         }
     }
-    
+
     /**
      * @return null
      */
@@ -122,7 +127,7 @@ class RoutingBootstrapService
         }
         return $this->router;
     }
-    
+
     /**
      * @return AnnotationDirectoryLoader
      */
@@ -144,7 +149,7 @@ class RoutingBootstrapService
         }
         return $this->requestContext;
     }
-    
+
     /**
      * @return Router
      */
@@ -152,8 +157,8 @@ class RoutingBootstrapService
     {
         return new Router(
             $this->getLoader(),
-            $this->componentDirectory.'/classes',
-            ['cache_dir'=> $this->cacheRoutingDirectory],
+            $this->componentDirectory . '/classes',
+            ['cache_dir' => $this->cacheRoutingDirectory],
             $this->getRequestContext()
         );
     }
@@ -167,7 +172,7 @@ class RoutingBootstrapService
         $requestContext->fromRequest(Request::createFromGlobals());
         return $requestContext;
     }
-    
+
     /**
      * @param $request
      */
@@ -179,7 +184,7 @@ class RoutingBootstrapService
             ACLMiddleware::class,
             ResourceCacheMiddleware::class
         ];
-        foreach ($middlewares as $middleware){
+        foreach ($middlewares as $middleware) {
             $middleware = (new Container($this->componentDirectory))->get($middleware);
             $middleware->handle($request, $httpKernel);
         }
@@ -191,7 +196,7 @@ class RoutingBootstrapService
      */
     protected function buildEventDispatcher()
     {
-        if(!$this->useEventsAndMiddleware){
+        if (!$this->useEventsAndMiddleware) {
             return new EventDispatcher();
         }
 
@@ -199,7 +204,7 @@ class RoutingBootstrapService
         $httpCacheListener = new HttpCacheListener();
         $magicArgumentsListener = new MagicControllerArgumentsListener();
         $attachRelationshipsListener = new AttachModelRelationshipsListener();
-        
+
         $eventDispatcher = new EventDispatcher();
         $eventDispatcher->addSubscriber($controllerListener);
         $eventDispatcher->addSubscriber($httpCacheListener);
@@ -207,5 +212,24 @@ class RoutingBootstrapService
         $eventDispatcher->addSubscriber($attachRelationshipsListener);
 
         return $eventDispatcher;
+    }
+
+    /**
+     * Filter the Query Parameter for any Non-Ascii character
+     *
+     * @param Request $request
+     */
+    protected function encodeQueryParams(Request $request): void
+    {
+        $encodedQueryKeys = array_map(function ($requestKeys) {
+            if (preg_match('/[^\\w^%]+/', $requestKeys, $nonWordCharacter) == 1) {
+                $searchString = [$nonWordCharacter[0], '_'];
+                $replaceString = [strtolower(urlencode($nonWordCharacter[0])), ' '];
+                return str_replace($searchString, $replaceString, $requestKeys);
+            }
+            return $requestKeys;
+        }, $request->query->keys());
+
+        $request->query->replace(array_combine($encodedQueryKeys, $request->query->all()));
     }
 }
