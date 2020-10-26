@@ -93,6 +93,7 @@ abstract class Controller
             }
         }
         $resources = $this->addRelationshipsToSearch($resources, $this->request->get('strict'));
+        $resources = $this->addOrderByToSearch($resources);
 
         return $resources;
     }
@@ -161,8 +162,27 @@ abstract class Controller
      */
     protected function stripPaginationFields($queryParameters)
     {
-        $paginationFields = ['page','offset','limit','relationships','strict'];
+        $paginationFields = ['page','offset','limit','relationships','strict', 'sortAsc', 'sortDesc'];
 
         return array_diff_key($queryParameters, array_flip($paginationFields));
+    }
+
+    /**
+     * @param Builder $resources
+     * @return Builder
+     */
+    protected function addOrderByToSearch(Builder $resources): Builder
+    {
+        $searchParams = preg_grep('/sortAsc|sortDesc/', array_keys($this->request->query->all()));
+
+        foreach ($searchParams as $searchParam) {
+            $orderBy = $searchParam == 'sortAsc' ? 'orderBy' : 'orderByDesc';
+
+            foreach (explode(',', $this->request->get($searchParam)) as $sortable) {
+                $resources->$orderBy($sortable);
+            }
+        }
+
+        return $resources;
     }
 }
