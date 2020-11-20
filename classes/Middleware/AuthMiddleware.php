@@ -16,7 +16,7 @@ class AuthMiddleware
     /**
      * @var string
      */
-    const JWT_KEY = '8thjv78w3478w34r873';
+    const JWT_KEY = '';
 
     /**
      * @var string
@@ -29,12 +29,11 @@ class AuthMiddleware
      */
     public function handle(Request $request)
     {
-        try {
-            return $this->tokenIsValid($request->headers->get('accesstoken'), $request->server->get('SERVER_NAME'), 'accesstoken') ||
-                   $this->tokenIsValid($request->headers->get('refreshtoken'), $request->server->get('SERVER_NAME'), 'refreshtoken');
-        } catch (\Exception $e){
-            throw new AccessDeniedHttpException("You have provided an invalid token.");
+        if($this->isAuthRequest($request)){
+            return true;
         }
+        return $this->tokenIsValid($request->headers->get('accesstoken'), $request->server->get('SERVER_NAME'), 'accesstoken') ||
+               $this->tokenIsValid($request->headers->get('refreshtoken'), $request->server->get('SERVER_NAME'), 'refreshtoken');
     }
 
     /**
@@ -57,9 +56,13 @@ class AuthMiddleware
         try {
             $token = JWT::decode($token, self::JWT_KEY, [self::ALGORITHM]);
     
-            return $token->expiry < time() && $token->host == $host && $token->type == $type;
+            if($token->expiry > time() && $token->host == $host && $token->type == $type){
+                return true;
+            } else {
+                throw new AccessDeniedHttpException("You have provided an invalid token.");
+            }
         } catch (\Exception $e) {
-            return false;
+            throw new AccessDeniedHttpException("You have provided an invalid token.");
         }
     }
 }

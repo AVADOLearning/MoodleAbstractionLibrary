@@ -2,6 +2,7 @@
 
 namespace Avado\MoodleAbstractionLibrary\Listeners;
 
+use Avado\MoodleAbstractionLibrary\Services\QueryResourceService;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Persistence\Proxy;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
@@ -49,13 +50,24 @@ class AttachModelRelationshipsListener implements EventSubscriberInterface
     {
         return array_map(function($parameter, $argument) use ($controllerModel, $request){
             $parameterType = $parameter->getType()->getName();
-
-            if($parameterType == $controllerModel){
-                if($relationships = $request->get('relationships')){
+            $queryResourceService = new QueryResourceService($request);
+            if($parameterType == $controllerModel) {
+                if ($this->checkIfSearchFieldsDefined($controllerModel)) {
+                    $argument = $queryResourceService->get($argument, $controllerModel);
+                } else if ($relationships = $request->get('relationships')) {
                     $argument->load(...explode(',', $relationships));
                 }
             }
             return $argument;
         }, $methodParameters, $requestArguments);
+    }
+
+    /**
+     * @param string $model
+     * @return bool
+     */
+    protected function checkIfSearchFieldsDefined(string $model): bool
+    {
+        return defined("$model::SEARCH_FIELDS");
     }
 }

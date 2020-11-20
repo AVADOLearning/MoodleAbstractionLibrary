@@ -8,9 +8,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Avado\MoodleAbstractionLibrary\Traits\ChecksUserIsPrivileged;
 
 class MagicControllerArgumentsListener implements EventSubscriberInterface
 {
+    use ChecksUserIsPrivileged;
+
     /**
      * Modifies the Request object to apply inject models where applicable. Replace id's with
      * an eloquent model.
@@ -20,8 +23,8 @@ class MagicControllerArgumentsListener implements EventSubscriberInterface
         $returnArguments = [];
 
         $controller = new \ReflectionClass($event->getController()[0]);
-
         $controllerModel = $controller->getConstant('MODEL');
+        $controllerModel::setPrivileged($this->isStaff($event->getRequest()));
         $method = $controller->getMethod($event->getController()[1]);
         $methodParameters = $method->getParameters();
         $requestArguments = $event->getArguments();
@@ -43,7 +46,6 @@ class MagicControllerArgumentsListener implements EventSubscriberInterface
 
     protected function getControllerModel()
     {
-
     }
 
     /**
@@ -52,15 +54,19 @@ class MagicControllerArgumentsListener implements EventSubscriberInterface
      * @param BaseModel $controllerModel
      * @return array
      */
-    protected function replaceParametersWithModel($methodParameters, $requestArguments, $controllerModel)
-    {
-        return array_map(function($parameter, $argument) use ($controllerModel){
+    protected function replaceParametersWithModel(
+        $methodParameters,
+        $requestArguments,
+        $controllerModel
+        ) {
+        return array_map(function ($parameter, $argument) use ($controllerModel) {
             $parameterType = $parameter->getType()->getName();
             $argument = $argument;
 
-            if($parameterType == $controllerModel){
+            if ($parameterType == $controllerModel) {
                 $argument = $controllerModel::find($argument);
             }
+
             return $argument;
         }, $methodParameters, $requestArguments);
     }

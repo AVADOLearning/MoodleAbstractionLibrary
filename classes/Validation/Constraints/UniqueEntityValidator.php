@@ -59,6 +59,9 @@ class UniqueEntityValidator extends ConstraintValidator
         foreach($fields as $fieldName){
             $query->where($fieldName, $entity->$fieldName);
         }
+        if($entity->id){
+            $query->where('id', '!=', $entity->id);
+        }
         $result = $query->get();
 
         if ($result instanceof \IteratorAggregate) {

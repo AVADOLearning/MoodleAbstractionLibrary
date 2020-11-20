@@ -6,6 +6,7 @@ use Avado\MoodleAbstractionLibrary\Database\Builder;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\ConnectionResolver;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 use Symfony\Component\Validator\Context\ExecutionContextFactory;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -14,7 +15,6 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class BaseModel
@@ -38,6 +38,18 @@ class BaseModel extends Model
     protected $observed = false;
 
     /**
+     * whether the current API user is able to return sensitive data
+     *
+     * @var boolean
+     */
+    public static $isPrivileged = false;
+
+    public static function setPrivileged(bool $privileged)
+    {
+        static::$isPrivileged = $privileged;
+    }
+
+    /**
      * BaseModel constructor.
      * @param array $attributes
      */
@@ -48,6 +60,17 @@ class BaseModel extends Model
         self::setConnectionResolver(new ConnectionResolver(['default' => Manager::connection('default')]));
         
         $this->setUpObserver();
+    }
+
+    /**
+     * @param array $data
+     * @param int $limit
+     */
+    public static function insertInChunks(array $data, int $limit = 200)
+    {
+        foreach (array_chunk($data, $limit) as $chunk) {
+            self::insert($chunk);
+        }
     }
 
     /**
@@ -86,7 +109,7 @@ class BaseModel extends Model
      */
     protected function setUpObserver(): void
     {
-        if(!$this->observed && defined(static::class.'::OBSERVER')){
+        if (!$this->observed && defined(static::class.'::OBSERVER')) {
             $this->registerObserver(static::OBSERVER);
         }
     }
@@ -104,14 +127,14 @@ class BaseModel extends Model
         $validator = $this->buildValidator();
         $valid = $validator->validate($this);
 
-        foreach($validator->validate($this) as $exception){
+        foreach ($validator->validate($this) as $exception) {
             $property = $exception->getPropertyPath();
             throw new \Exception("Provided $property is invalid: ".$exception->getMessage());
         }
 
         $saved = parent::save();
         
-        if(defined('static::CHILDREN') && is_array(static::CHILDREN)){
+        if (defined('static::CHILDREN') && is_array(static::CHILDREN)) {
             $this->saveChildren(static::CHILDREN);
         }
         return $saved;
@@ -164,20 +187,25 @@ class BaseModel extends Model
     protected function saveChildren(array $children, array $data = null)
     {
         foreach ($children as $childRelationship => $childClass) {
-            $this->$childRelationship()->saveMany(
-                array_map(function($child) use ($childClass){
-                    if($child['id']){
-                        $childId = $child['id'];
-                        unset($child['id']);
-                        return $childClass::find($childId)->fill($child);
-                    }
-                    return new $childClass($child);
-                }, $this->objectToArray($data ?? $this->$childRelationship))
-            );
+            $snakeNameChildRelationship = Str::snake($childRelationship);
+            $childClass = is_array($childClass) ? $childClass[0]: $childClass;
+            if (is_array($data) || is_array($this->$snakeNameChildRelationship)) {
+                $this->$childRelationship()->saveMany(
+                    array_map(function ($child) use ($childClass) {
+                        if ($child['id']) {
+                            $childId = $child['id'];
+                            unset($child['id']);
+                            return $childClass::find($childId)->fill($child);
+                        }
+                        return new $childClass($child);
+                    }, $this->objectToArray($data ?? $this->$snakeNameChildRelationship))
+                );
 
-            if(defined('$childClass::CHILDREN') && is_array($childClass::CHILDREN)){
-                $this->saveChildren($childClass::CHILDREN, $data->$childRelationship);
+                if(defined('$childClass::CHILDREN') && is_array($childClass::CHILDREN)){
+                    $this->saveChildren($childClass::CHILDREN, $data->$snakeNameChildRelationship);
+                }
             }
+            unset($this->$snakeNameChildRelationship);
         }
     }
 
@@ -190,6 +218,7 @@ class BaseModel extends Model
     {
         if(defined('static::CHILDREN') && is_array(static::CHILDREN)){
             foreach(static::CHILDREN as $childRelationship => $childClass){
+                $childRelationship = Str::snake($childRelationship);
                 unset($this->attributes[$childRelationship]);
             }
         }
@@ -255,5 +284,17 @@ class BaseModel extends Model
     protected function objectToArray($object)
     {
         return json_decode(json_encode($object), true);
+    }
+
+    /**
+     * Get the hidden attributes for the model.
+     */
+    public function getHidden()
+    {
+        if (!static::$isPrivileged) {
+            $this->hidden = array_merge($this->hidden, $this->restricted ?? []);
+        }
+
+        return $this->hidden;
     }
 }

@@ -32,6 +32,7 @@ class ACLMiddleware
         $controllerModel = $controllerModel::find($request->attributes->get($resourceAttribute));
 
         $activeUser = User::find($token->user->id);
+        $request->userId = $token->user->id;
 
         if(!$controllerModel && $request->attributes->get($resourceAttribute)){
             throw new NotFoundHttpException("That resource doesn't exist");

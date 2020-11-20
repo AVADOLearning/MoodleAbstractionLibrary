@@ -13,7 +13,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
-        return parent::paginate($perPage, $columns, $pageName, $this->getCurrentPaginationPage());
+        return parent::paginate($this->getCurrentPageLimit(), $columns, $pageName, $this->getCurrentPaginationPage());
     }
 
     /**
@@ -22,5 +22,15 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
     protected function getCurrentPaginationPage()
     {
         return $_GET['page'] ?? 1;
+    }
+
+    /**
+     * Get current page limit, defaulted to 15 records based on eloquent model.
+     *
+     * @return mixed|null
+     */
+    protected function getCurrentPageLimit()
+    {
+        return $_GET['limit'] ?? null;
     }
 }
