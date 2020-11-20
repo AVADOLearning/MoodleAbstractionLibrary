@@ -72,6 +72,17 @@ class AuthController extends Controller
     }
 
     /**
+     * @Route("/guestauth", methods={"GET"})
+     */
+    public function guestAuth()
+    {
+        return new JsonResponse([
+            'success' => 'true',
+            'accesstoken' => JWT::encode($this->buildGuestAccessToken(), AuthMiddleware::JWT_KEY)
+        ]);
+    }
+
+    /**
      * @param User $user
      * @return array
      */
@@ -85,6 +96,7 @@ class AuthController extends Controller
             ],
             'expiry' => time() + 900,
             'type' => 'accesstoken',
+            'visibility' => 'user',
             'host' => $this->request->server->get('SERVER_NAME')
         ];
     }
@@ -99,6 +111,23 @@ class AuthController extends Controller
             'userId' => $user->id,
             'expiry' => time() + 5184000,
             'type' => 'refreshtoken',
+            'host' => $this->request->server->get('SERVER_NAME')
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function buildGuestAccessToken()
+    {
+        return [
+            'user'=> [
+                'id' => 1,
+                'uuid' => uniqid()
+            ],
+            'expiry' => time() + 900,
+            'type' => 'accesstoken',
+            'visibility' => 'guest',
             'host' => $this->request->server->get('SERVER_NAME')
         ];
     }

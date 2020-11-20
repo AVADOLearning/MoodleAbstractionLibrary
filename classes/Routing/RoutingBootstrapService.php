@@ -26,8 +26,7 @@ use Doctrine\Common\Annotations\DocParser;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Avado\MoodleAbstractionLibrary\Listeners\MagicControllerArgumentsListener;
 use Avado\MoodleAbstractionLibrary\Listeners\AttachModelRelationshipsListener;
-
-// use Avado\MoodleAbstractionLibrary\Validation\Constraints\UniqueEntity;
+use DebugBar\StandardDebugBar;
 
 // $uniqueEntity = new UniqueEntity();
 
@@ -67,11 +66,13 @@ class RoutingBootstrapService
     public function __construct(
         string $componentDirectory,
         bool $useEventsAndMiddleware = false,
-        string $cacheRoutingDirectory = null
+        string $cacheRoutingDirectory = null,
+        bool $devMode = false
     ) {
         $this->componentDirectory = $componentDirectory;
         $this->useEventsAndMiddleware = $useEventsAndMiddleware;
         $this->cacheRoutingDirectory = $cacheRoutingDirectory;
+        $this->devMode = $devMode;
     }
 
     /**
@@ -105,6 +106,7 @@ class RoutingBootstrapService
 
                 } catch (HttpException $e) {
                     (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
+                    die;
                 }
             }
             $response = $httpKernel->handle($request)->send();
@@ -113,8 +115,8 @@ class RoutingBootstrapService
             (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
         } catch (\Exception $e) {
             (new JsonResponse(['success' => 'false', 'message' => $e->getMessage()]))->send();
-            die;
         }
+
     }
 
     /**
