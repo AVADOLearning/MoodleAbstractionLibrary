@@ -2,7 +2,6 @@
 
 namespace Avado\MoodleAbstractionLibrary\Mailer;
 
-use Avado\MoodleAbstractionLibrary\Services\TwigService;
 use Swift_Message;
 
 /**
@@ -20,20 +19,13 @@ class Message
     protected $message;
 
     /**
-     * @var TwigService
-     */
-    protected $twigService;
-
-    /**
      * Mail constructor.
      *
      * @param Swift_Message $message
-     * @param TwigService   $twigService
      */
-    public function __construct(Swift_Message $message, TwigService $twigService)
+    public function __construct(Swift_Message $message)
     {
         $this->message = $message;
-        $this->twigService = $twigService;
     }
 
     /**
