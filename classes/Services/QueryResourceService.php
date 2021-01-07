@@ -4,6 +4,7 @@ namespace Avado\MoodleAbstractionLibrary\Services;
 
 use Avado\MoodleAbstractionLibrary\Database\Builder;
 use Symfony\Component\HttpFoundation\Request;
+use Avado\MoodleAbstractionLibrary\Routing\Controller\Controller;
 use Avado\MoodleAbstractionLibrary\Traits\ChecksUserIsPrivileged;
 
 /**
@@ -47,16 +48,18 @@ class QueryResourceService
 
     /**
      * @param string $model
+     * @param Controller $controller
      * @return Builder|mixed
      * @throws \Exception
      */
-    public function search(string $model)
+    public function search(string $model, Controller $controller)
     {
         $this->route = 'search';
         ($model)::setPrivileged($this->isStaff($this->request));
         $queryParameters = $this->getConstraints();
         $resources = $this->queryConstraints(($model)::query(), $queryParameters[0], [$model]);
         $resources = $this->addRelationshipsToSearch($resources, $queryParameters[1], $model);
+        $resources = method_exists($controller, 'filterSearch') ? $controller->filterSearch($resources) : $resources;
         return $this->addSortByToSearch($resources);
     }
 
