@@ -2,13 +2,14 @@
 
 namespace Avado\MoodleAbstractionLibrary\Controllers;
 
-use Avado\MoodleAbstractionLibrary\Middleware\AuthMiddleware;
-use Avado\MoodleAbstractionLibrary\Policies\AuthPolicy;
-use Avado\MoodleAbstractionLibrary\Entities\User;
-use Avado\MoodleAbstractionLibrary\Routing\Controller\Controller;
 use Firebase\JWT\JWT;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Annotation\Route;
+use Avado\MoodleAbstractionLibrary\Entities\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Avado\MoodleAbstractionLibrary\Policies\AuthPolicy;
+use Avado\MoodleAbstractionLibrary\Middleware\AuthMiddleware;
+use Avado\MoodleAbstractionLibrary\Routing\Controller\Controller;
 
 /**
  * Class AuthController
@@ -42,14 +43,16 @@ class AuthController extends Controller
 
         $user = User::where('username', $username)->first();
 
-        if($this->verifyPassword($user, $password)){
+        if ($this->verifyPassword($user, $password)) {
             return new JsonResponse([
-                'success'=>'true',
+                'success' => 'true',
                 'accesstoken' => JWT::encode($this->buildAccessToken($user), AuthMiddleware::JWT_KEY),
-                'refreshtoken' => JWT::encode($this->buildRefreshToken($user), AuthMiddleware::JWT_KEY)
+                'refreshtoken' => JWT::encode($this->buildRefreshToken($user), AuthMiddleware::JWT_KEY),
+                'logintoken' => JWT::encode($this->buildLoginToken($user), AuthMiddleware::JWT_KEY)
             ]);
         }
-        return new JsonResponse(['success'=>'false', 'message'=>'Incorrect user details supplied.']);
+
+        return new JsonResponse(['success' => 'false', 'message' => 'Incorrect user details supplied.']);
     }
 
     /**
@@ -61,14 +64,15 @@ class AuthController extends Controller
 
         $user = $this->pullUserFromRefreshToken($refreshToken, $this->request->server->get('SERVER_NAME'));
 
-        if($refreshToken && $user){
+        if ($refreshToken && $user) {
             return new JsonResponse([
-                'success'=>'true',
+                'success' => 'true',
                 'accesstoken' => JWT::encode($this->buildAccessToken($user), AuthMiddleware::JWT_KEY),
                 'refreshtoken' => JWT::encode($this->buildRefreshToken($user), AuthMiddleware::JWT_KEY)
             ]);
         }
-        return new JsonResponse(['success'=>'false', 'message'=>'Invalid refresh token provided']);
+
+        return new JsonResponse(['success' => 'false', 'message' => 'Invalid refresh token provided']);
     }
 
     /**
@@ -86,10 +90,10 @@ class AuthController extends Controller
      * @param User $user
      * @return array
      */
-    public function buildAccessToken(User $user)
+    public function buildAccessToken(User $user): array
     {
         return [
-            'user'=> [
+            'user' => [
                 'id' => $user->id,
                 'firstname' => $user->firstname,
                 'lastname' => $user->lastname
@@ -105,7 +109,7 @@ class AuthController extends Controller
      * @param User $user
      * @return array
      */
-    public function buildRefreshToken(User $user)
+    public function buildRefreshToken(User $user): array
     {
         return [
             'userId' => $user->id,
@@ -118,12 +122,12 @@ class AuthController extends Controller
     /**
      * @return array
      */
-    public function buildGuestAccessToken()
+    public function buildGuestAccessToken(): array
     {
         return [
-            'user'=> [
+            'user' => [
                 'id' => 1,
-                'uuid' => uniqid()
+                'uuid' => Uuid::uuid4(),
             ],
             'expiry' => time() + 900,
             'type' => 'accesstoken',
@@ -133,11 +137,28 @@ class AuthController extends Controller
     }
 
     /**
+     * @param User $user
+     * @return array
+     */
+    public function buildLoginToken(User $user): array
+    {
+        return [
+            'user' => [
+                'id' => $user->id,
+                'uuid' => Uuid::uuid4()
+            ],
+            'expiry' => time() + 15,
+            'type' => 'logintoken',
+            'host' => $this->request->server->get('SERVER_NAME')
+        ];
+    }
+
+    /**
      * @param $user
      * @param $password
      * @return bool
      */
-    public function verifyPassword($user, $password)
+    public function verifyPassword($user, $password): bool
     {
         return password_verify($password, $user->password);
     }
@@ -150,7 +171,7 @@ class AuthController extends Controller
     {
         $token = JWT::decode($token, AuthMiddleware::JWT_KEY, [AuthMiddleware::ALGORITHM]);
 
-        if($token->expiry > time() && $token->host == $host && $token->type == 'refreshtoken'){
+        if ($token->expiry > time() && $token->host == $host && $token->type == 'refreshtoken') {
             return User::find($token->userId);
         }
         return false;
