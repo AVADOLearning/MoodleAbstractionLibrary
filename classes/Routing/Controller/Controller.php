@@ -85,7 +85,7 @@ abstract class Controller
     {
         if ($this->checkIfSearchFieldsDefined()) {
             $queryResource = new QueryResourceService($this->request);
-            return $queryResource->search((get_class($this))::MODEL);
+            return $queryResource->search((get_class($this))::MODEL, $this);
         } else {
             (static::MODEL)::setPrivileged($this->isStaff($this->request));
             $resources = (static::MODEL)::query();
@@ -108,6 +108,7 @@ abstract class Controller
                 }
             }
             $resources = $this->addRelationshipsToSearch($resources, $this->request->get('strict'));
+            $resources = method_exists($this, 'filterSearch') ? $this->filterSearch($resources) : $resources;
             $resources = $this->addSortByToSearch($resources);
 
             return $resources;
