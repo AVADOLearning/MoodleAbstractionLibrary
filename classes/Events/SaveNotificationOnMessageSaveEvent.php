@@ -9,6 +9,7 @@ use Avado\MoodleAbstractionLibrary\Entities\NotificationEventType;
 use Avado\MoodleAbstractionLibrary\Entities\NotificationSetting;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
+use Monolog\Logger;
 
 /**
  * Class SaveNotificationOnMessageSaveEvent
@@ -20,6 +21,16 @@ class SaveNotificationOnMessageSaveEvent extends AbstractEvent
      * @var bool
      */
     public const QUEUED = false;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
+    public function __construct(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * @param array $arguments
@@ -38,7 +49,7 @@ class SaveNotificationOnMessageSaveEvent extends AbstractEvent
     {
         return static::QUEUED ? $this->addToQueue($arguments) : $this->execute($arguments);
     }
-    
+
     /**
      * @param array $arguments
      * @return bool
@@ -68,7 +79,7 @@ class SaveNotificationOnMessageSaveEvent extends AbstractEvent
                     'should_email'         => (int) $shouldEmail
                 ]);
             } catch (QueryException $e) {
-                return false;
+                $this->logger->error("Failed to create Notification in MAL 'SaveNotificationOnMessageSaveEvent': {$e->getTraceAsString()}");
             }
 
             if ($shouldEmail) {
@@ -157,7 +168,7 @@ class SaveNotificationOnMessageSaveEvent extends AbstractEvent
             ]);
             return true;
         } catch (QueryException $e) {
-            return false;
+            $this->logger->error("Failed to add Notification to mail queue in MAL 'SaveNotificationOnMessageSaveEvent': {$e->getTraceAsString()}");
         }
     }
 
@@ -173,7 +184,7 @@ class SaveNotificationOnMessageSaveEvent extends AbstractEvent
                 'status' => 1
             ]);
         } catch (QueryException $e) {
-            return false;
+            $this->logger->error("Failed to create event type in MAL 'SaveNotificationOnMessageSaveEvent': {$e->getTraceAsString()}");
         }
     }
 
@@ -189,7 +200,7 @@ class SaveNotificationOnMessageSaveEvent extends AbstractEvent
                 'status' => 1
             ]);
         } catch (QueryException $e) {
-            return false;
+            $this->logger->error("Failed to create component ID in MAL 'SaveNotificationOnMessageSaveEvent': {$e->getTraceAsString()}");
         }
     }
 }
