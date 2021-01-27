@@ -27,6 +27,10 @@ class SaveNotificationOnMessageSaveEvent extends AbstractEvent
      */
     protected $logger;
 
+    /**
+     * SaveNotificationOnMessageSaveEvent constructor.
+     * @param Logger $logger
+     */
     public function __construct(Logger $logger)
     {
         $this->logger = $logger;
